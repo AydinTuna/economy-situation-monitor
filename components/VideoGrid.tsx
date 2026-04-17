@@ -61,7 +61,7 @@ export default function VideoGrid() {
   }
 
   return (
-    <div className="flex flex-col md:h-full p-3 gap-3">
+    <div className="flex flex-col lg:h-full p-3 gap-3">
       {/* Header */}
       <div className="flex items-center gap-2 shrink-0 px-1">
         <h2 className="text-[11px] font-semibold text-gray-400 uppercase tracking-widest">
@@ -72,8 +72,8 @@ export default function VideoGrid() {
         </span>
       </div>
 
-      {/* Desktop: sidebar + spotlight */}
-      <div className="hidden md:flex gap-3 flex-1 min-h-0">
+      {/* Large screens: sidebar + spotlight */}
+      <div className="hidden lg:flex gap-3 flex-1 min-h-0">
         {/* Left sidebar — muted thumbnails */}
         <div className="flex flex-col gap-2 w-[168px] shrink-0 overflow-y-auto pr-0.5">
           {sidebarStreams.map((stream) => (
@@ -93,8 +93,8 @@ export default function VideoGrid() {
         </div>
       </div>
 
-      {/* Mobile: main stream on top, horizontal thumbnail strip below */}
-      <div className="flex flex-col gap-3 md:hidden">
+      {/* Small & medium screens: main stream on top, horizontal thumbnail strip below */}
+      <div className="flex flex-col gap-3 lg:hidden">
         <div className="aspect-video">
           {renderStream(mainStream, true, mainMuted, {
             onToggleMute: () => setMainMuted((prev) => !prev),

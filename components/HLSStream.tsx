@@ -123,7 +123,7 @@ export default function HLSStream({ name, hlsUrl, color, isMuted, isMain, onTogg
       </div>
 
       {/* Video area */}
-      <div className="relative aspect-video md:aspect-auto md:flex-1 bg-black">
+      <div className="relative aspect-video lg:aspect-auto lg:flex-1 bg-black">
         {isVisible ? (
           <video
             ref={videoRef}

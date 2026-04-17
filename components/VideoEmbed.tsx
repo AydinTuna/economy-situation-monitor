@@ -124,7 +124,7 @@ export default function VideoEmbed({ name, embedUrl, color, isMuted, isMain, onT
       </div>
 
       {/* Video area */}
-      <div className="relative aspect-video md:aspect-auto md:flex-1 bg-black">
+      <div className="relative aspect-video lg:aspect-auto lg:flex-1 bg-black">
         {isVisible ? (
           <iframe
             ref={iframeRef}
