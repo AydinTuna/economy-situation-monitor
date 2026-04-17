@@ -19,16 +19,21 @@ function UnmuteIcon() {
   );
 }
 
-export default function HLSStream({ name, hlsUrl, color }: HLSVideoStream) {
+interface Props extends HLSVideoStream {
+  isMuted: boolean;
+  isMain?: boolean;
+  onToggleMute?: () => void;
+  onClick?: () => void;
+}
+
+export default function HLSStream({ name, hlsUrl, color, isMuted, isMain, onToggleMute, onClick }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isVisible, setIsVisible] = useState(false);
-  const [isMuted, setIsMuted] = useState(true);
 
   useEffect(() => {
     const el = containerRef.current;
     if (!el) return;
-
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
@@ -38,7 +43,6 @@ export default function HLSStream({ name, hlsUrl, color }: HLSVideoStream) {
       },
       { threshold: 0.05 }
     );
-
     observer.observe(el);
     return () => observer.disconnect();
   }, []);
@@ -57,11 +61,7 @@ export default function HLSStream({ name, hlsUrl, color }: HLSVideoStream) {
     } else {
       import('hls.js').then(({ default: Hls }) => {
         if (!Hls.isSupported()) return;
-
-        hlsInstance = new Hls({
-          lowLatencyMode: true,
-          liveSyncDurationCount: 3,
-        });
+        hlsInstance = new Hls({ lowLatencyMode: true, liveSyncDurationCount: 3 });
         hlsInstance.loadSource(hlsUrl);
         hlsInstance.attachMedia(video);
         hlsInstance.on(Hls.Events.MANIFEST_PARSED, () => {
@@ -75,39 +75,49 @@ export default function HLSStream({ name, hlsUrl, color }: HLSVideoStream) {
     };
   }, [isVisible, hlsUrl]);
 
-  const toggleMute = () => {
+  // Sync muted state whenever the prop changes or when the video element first appears
+  useEffect(() => {
+    if (!isVisible) return;
     const video = videoRef.current;
     if (!video) return;
-    video.muted = !video.muted;
-    setIsMuted(video.muted);
-  };
+    video.muted = isMuted;
+  }, [isMuted, isVisible]);
 
   return (
     <div
       ref={containerRef}
-      className="flex flex-col h-full bg-gray-900 rounded-lg overflow-hidden border border-gray-800 min-h-0"
+      onClick={!isMain ? onClick : undefined}
+      className={`flex flex-col h-full bg-gray-900 rounded-lg overflow-hidden border min-h-0 transition-all duration-200 ${
+        isMain
+          ? 'border-gray-600'
+          : 'border-gray-800 cursor-pointer hover:border-gray-500 hover:bg-gray-800/60 group'
+      }`}
     >
-      {/* Stream header bar */}
-      <div className="flex items-center gap-2 px-3 py-1.5 border-b border-gray-800 shrink-0">
+      {/* Header */}
+      <div className="flex items-center gap-2 px-2.5 py-1.5 border-b border-gray-800 shrink-0">
         <span className={`h-2 w-2 rounded-full shrink-0 ${color}`} />
-        <span className="text-[11px] font-semibold text-gray-300 uppercase tracking-wider">
+        <span className="text-[11px] font-semibold text-gray-300 uppercase tracking-wider truncate">
           {name}
         </span>
-        <span className="ml-auto flex items-center gap-2">
-          <button
-            onClick={toggleMute}
-            className={`flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-medium uppercase transition-colors ${
-              isMuted
-                ? 'text-gray-500 hover:text-gray-300'
-                : 'text-green-400 hover:text-green-300'
-            }`}
-            title={isMuted ? 'Sesi Aç' : 'Sesi Kapat'}
-          >
-            {isMuted ? <MuteIcon /> : <UnmuteIcon />}
-          </button>
+        <span className="ml-auto flex items-center gap-2 shrink-0">
+          {isMain && onToggleMute && (
+            <button
+              onClick={onToggleMute}
+              className={`flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-medium uppercase transition-colors ${
+                isMuted
+                  ? 'text-gray-500 hover:text-gray-300'
+                  : 'text-green-400 hover:text-green-300'
+              }`}
+              title={isMuted ? 'Sesi Aç' : 'Sesi Kapat'}
+            >
+              {isMuted ? <MuteIcon /> : <UnmuteIcon />}
+            </button>
+          )}
           <span className="flex items-center gap-1">
             <span className="animate-pulse h-1.5 w-1.5 rounded-full bg-red-500" />
-            <span className="text-[10px] text-gray-500 font-medium uppercase">Live</span>
+            {isMain && (
+              <span className="text-[10px] text-gray-500 font-medium uppercase">Live</span>
+            )}
           </span>
         </span>
       </div>
@@ -126,9 +136,13 @@ export default function HLSStream({ name, hlsUrl, color }: HLSVideoStream) {
           <div className="absolute inset-0 flex items-center justify-center bg-gray-950">
             <div className="flex flex-col items-center gap-3 text-gray-600">
               <div className="w-6 h-6 border-2 border-gray-700 rounded-full border-t-gray-400 animate-spin" />
-              <span className="text-[11px]">Loading stream…</span>
+              <span className="text-[11px]">Loading…</span>
             </div>
           </div>
+        )}
+        {/* Subtle hover dim for sidebar thumbnails */}
+        {!isMain && (
+          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors pointer-events-none" />
         )}
       </div>
     </div>

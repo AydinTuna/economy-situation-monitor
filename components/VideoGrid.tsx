@@ -1,73 +1,114 @@
+'use client';
+
+import { useState } from 'react';
 import HLSStream from './HLSStream';
 import VideoEmbed from './VideoEmbed';
 import { HLS_STREAMS, VIDEO_STREAMS } from '@/lib/rss';
 
+const DEFAULT_MAIN = 'Bloomberg';
+
+type EmbedStream = (typeof VIDEO_STREAMS)[number] & { type: 'embed' };
+type HlsStream = (typeof HLS_STREAMS)[number] & { type: 'hls' };
+type StreamItem = EmbedStream | HlsStream;
+
 export default function VideoGrid() {
-  const allStreams = [
+  const allStreams: StreamItem[] = [
     ...VIDEO_STREAMS.map((s) => ({ ...s, type: 'embed' as const })),
     ...HLS_STREAMS.map((s) => ({ ...s, type: 'hls' as const })),
   ];
-  const last = allStreams.length % 2 !== 0 ? allStreams[allStreams.length - 1] : null;
-  const pairs = last ? allStreams.slice(0, -1) : allStreams;
-  // Number of grid rows: pairs fill 2-col rows, last occupies 1 more row
-  const rowCount = Math.ceil(allStreams.length / 2);
+
+  const [activeId, setActiveId] = useState(DEFAULT_MAIN);
+  const [mainMuted, setMainMuted] = useState(false); // Bloomberg starts unmuted
+
+  const mainStream = allStreams.find((s) => s.name === activeId) ?? allStreams[0];
+  const sidebarStreams = allStreams.filter((s) => s.name !== activeId);
+
+  function handleSelect(name: string) {
+    setActiveId(name);
+    setMainMuted(false);
+  }
+
+  function renderStream(
+    stream: StreamItem,
+    isMain: boolean,
+    isMuted: boolean,
+    handlers: { onToggleMute?: () => void; onClick?: () => void }
+  ) {
+    if (stream.type === 'hls') {
+      return (
+        <HLSStream
+          key={stream.name}
+          name={stream.name}
+          hlsUrl={stream.hlsUrl}
+          color={stream.color}
+          isMuted={isMuted}
+          isMain={isMain}
+          {...handlers}
+        />
+      );
+    }
+    return (
+      <VideoEmbed
+        key={stream.name}
+        name={stream.name}
+        embedUrl={stream.embedUrl}
+        color={stream.color}
+        isMuted={isMuted}
+        isMain={isMain}
+        {...handlers}
+      />
+    );
+  }
 
   return (
     <div className="flex flex-col md:h-full p-3 gap-3">
+      {/* Header */}
       <div className="flex items-center gap-2 shrink-0 px-1">
         <h2 className="text-[11px] font-semibold text-gray-400 uppercase tracking-widest">
           Live Streams
         </h2>
         <span className="text-[10px] text-gray-600">
-          — Bloomberg · Yahoo Finance · CNBC · Reuters · BloombergHT
+          — {mainStream.name} odakta
         </span>
       </div>
 
-      {/*
-        Mobile:  1 column, each video natural 16:9 height, page scrolls
-        Desktop: 2-column grid, fills available height with equal-height rows.
-                 grid-template-rows: repeat(N, 1fr) distributes space evenly so
-                 flex-1 inside each card can actually expand.
-      */}
-      <div
-        className="grid grid-cols-1 md:grid-cols-2 gap-3 md:flex-1 md:min-h-0"
-        style={{ gridTemplateRows: `repeat(${rowCount}, minmax(0, 1fr))` }}
-      >
-        {pairs.map((stream) =>
-          stream.type === 'hls' ? (
-            <HLSStream
-              key={stream.name}
-              name={stream.name}
-              hlsUrl={(stream as typeof HLS_STREAMS[number]).hlsUrl}
-              color={stream.color}
-            />
-          ) : (
-            <VideoEmbed
-              key={stream.name}
-              name={stream.name}
-              embedUrl={(stream as typeof VIDEO_STREAMS[number]).embedUrl}
-              color={stream.color}
-            />
-          )
-        )}
+      {/* Desktop: sidebar + spotlight */}
+      <div className="hidden md:flex gap-3 flex-1 min-h-0">
+        {/* Left sidebar — muted thumbnails */}
+        <div className="flex flex-col gap-2 w-[168px] shrink-0 overflow-y-auto pr-0.5">
+          {sidebarStreams.map((stream) => (
+            <div key={stream.name} className="h-[112px] shrink-0">
+              {renderStream(stream, false, true, {
+                onClick: () => handleSelect(stream.name),
+              })}
+            </div>
+          ))}
+        </div>
 
-        {last && (
-          <div className="md:col-span-2 h-full">
-            {last.type === 'hls' ? (
-              <HLSStream
-                name={last.name}
-                hlsUrl={(last as typeof HLS_STREAMS[number]).hlsUrl}
-                color={last.color}
-              />
-            ) : (
-              <VideoEmbed
-                name={last.name}
-                embedUrl={(last as typeof VIDEO_STREAMS[number]).embedUrl}
-                color={last.color}
-              />
-            )}
-          </div>
-        )}
+        {/* Main spotlight stream */}
+        <div className="flex-1 min-w-0 min-h-0">
+          {renderStream(mainStream, true, mainMuted, {
+            onToggleMute: () => setMainMuted((prev) => !prev),
+          })}
+        </div>
+      </div>
+
+      {/* Mobile: main stream on top, horizontal thumbnail strip below */}
+      <div className="flex flex-col gap-3 md:hidden">
+        <div className="aspect-video">
+          {renderStream(mainStream, true, mainMuted, {
+            onToggleMute: () => setMainMuted((prev) => !prev),
+          })}
+        </div>
+        <div className="flex gap-2 overflow-x-auto pb-1">
+          {sidebarStreams.map((stream) => (
+            <div key={stream.name} className="w-[160px] h-[100px] shrink-0">
+              {renderStream(stream, false, true, {
+                onClick: () => handleSelect(stream.name),
+              })}
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
