@@ -54,6 +54,12 @@ export const VIDEO_STREAMS: VideoStream[] = [
       'https://www.youtube.com/embed/nzyyLIvt_jE?autoplay=1&mute=1',
     color: 'bg-cyan-500',
   },
+  {
+    name: 'BloombergHT',
+    embedUrl:
+      'https://www.youtube.com/embed/hHSmBJk6w0c?autoplay=1&mute=1',
+    color: 'bg-orange-400',
+  },
 ];
 
 type CustomItem = {
