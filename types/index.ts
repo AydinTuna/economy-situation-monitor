@@ -20,3 +20,9 @@ export interface VideoStream {
   embedUrl: string;
   color: string;
 }
+
+export interface HLSVideoStream {
+  name: string;
+  hlsUrl: string;
+  color: string;
+}

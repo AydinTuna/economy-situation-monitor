@@ -5,13 +5,14 @@ const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
       { protocol: "https", hostname: "**.bloomberg.com" },
+      { protocol: "https", hostname: "**.bloomberght.com" },
       { protocol: "https", hostname: "**.cnn.com" },
       { protocol: "https", hostname: "**.cnbc.com" },
       { protocol: "https", hostname: "**.ytimg.com" },
     ],
   },
 
-  // Permit YouTube iframes via Content-Security-Policy
+  // Permit YouTube iframes and BloombergHT HLS stream via Content-Security-Policy
   async headers() {
     return [
       {
@@ -26,7 +27,7 @@ const nextConfig: NextConfig = {
               "font-src 'self' https://fonts.gstatic.com",
               "img-src 'self' data: https:",
               "frame-src https://www.youtube.com https://www.youtube-nocookie.com",
-              "connect-src 'self'",
+              "connect-src 'self' https://ciner.daioncdn.net https://ciner-live.daioncdn.net https://bloomberght-live.daioncdn.net",
               "media-src 'self' https:",
             ].join("; "),
           },

@@ -1,5 +1,5 @@
 import Parser from 'rss-parser';
-import type { FeedItem, FeedSource, VideoStream } from '@/types';
+import type { FeedItem, FeedSource, HLSVideoStream, VideoStream } from '@/types';
 
 export const FEEDS: FeedSource[] = [
   {
@@ -26,6 +26,11 @@ export const FEEDS: FeedSource[] = [
     name: 'Markets',
     url: 'https://www.investing.com/rss/news_14.rss',
     color: 'bg-lime-500',
+  },
+  {
+    name: 'BloombergHT',
+    url: 'https://www.bloomberght.com/rss',
+    color: 'bg-orange-400',
   },
 ];
 
@@ -54,10 +59,12 @@ export const VIDEO_STREAMS: VideoStream[] = [
       'https://www.youtube.com/embed/nzyyLIvt_jE?autoplay=1&mute=1',
     color: 'bg-cyan-500',
   },
+];
+
+export const HLS_STREAMS: HLSVideoStream[] = [
   {
     name: 'BloombergHT',
-    embedUrl:
-      'https://www.youtube.com/embed/hHSmBJk6w0c?autoplay=1&mute=1',
+    hlsUrl: 'https://ciner.daioncdn.net/bloomberght/bloomberght_720p.m3u8',
     color: 'bg-orange-400',
   },
 ];

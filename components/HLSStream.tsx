@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import type { VideoStream } from '@/types';
+import type { HLSVideoStream } from '@/types';
 
 function MuteIcon() {
   return (
@@ -19,16 +19,11 @@ function UnmuteIcon() {
   );
 }
 
-export default function VideoEmbed({ name, embedUrl, color }: VideoStream) {
+export default function HLSStream({ name, hlsUrl, color }: HLSVideoStream) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const iframeRef = useRef<HTMLIFrameElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
   const [isVisible, setIsVisible] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
-
-  // Append enablejsapi=1 so YouTube accepts postMessage commands
-  const src = embedUrl.includes('enablejsapi')
-    ? embedUrl
-    : `${embedUrl}&enablejsapi=1`;
 
   useEffect(() => {
     const el = containerRef.current;
@@ -48,20 +43,43 @@ export default function VideoEmbed({ name, embedUrl, color }: VideoStream) {
     return () => observer.disconnect();
   }, []);
 
-  const sendYouTubeCommand = (func: string) => {
-    iframeRef.current?.contentWindow?.postMessage(
-      JSON.stringify({ event: 'command', func, args: '' }),
-      '*'
-    );
-  };
+  useEffect(() => {
+    if (!isVisible) return;
+
+    const video = videoRef.current;
+    if (!video) return;
+
+    let hlsInstance: import('hls.js').default | null = null;
+
+    if (video.canPlayType('application/vnd.apple.mpegurl')) {
+      video.src = hlsUrl;
+      video.play().catch(() => {});
+    } else {
+      import('hls.js').then(({ default: Hls }) => {
+        if (!Hls.isSupported()) return;
+
+        hlsInstance = new Hls({
+          lowLatencyMode: true,
+          liveSyncDurationCount: 3,
+        });
+        hlsInstance.loadSource(hlsUrl);
+        hlsInstance.attachMedia(video);
+        hlsInstance.on(Hls.Events.MANIFEST_PARSED, () => {
+          video.play().catch(() => {});
+        });
+      });
+    }
+
+    return () => {
+      hlsInstance?.destroy();
+    };
+  }, [isVisible, hlsUrl]);
 
   const toggleMute = () => {
-    if (isMuted) {
-      sendYouTubeCommand('unMute');
-    } else {
-      sendYouTubeCommand('mute');
-    }
-    setIsMuted((prev) => !prev);
+    const video = videoRef.current;
+    if (!video) return;
+    video.muted = !video.muted;
+    setIsMuted(video.muted);
   };
 
   return (
@@ -94,16 +112,15 @@ export default function VideoEmbed({ name, embedUrl, color }: VideoStream) {
         </span>
       </div>
 
-      {/* Video area — aspect-ratio on mobile, flex-fill on desktop */}
+      {/* Video area */}
       <div className="relative aspect-video md:aspect-auto md:flex-1 bg-black">
         {isVisible ? (
-          <iframe
-            ref={iframeRef}
-            src={src}
-            title={`${name} Live Stream`}
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            allowFullScreen
-            className="absolute inset-0 w-full h-full border-0"
+          <video
+            ref={videoRef}
+            autoPlay
+            muted
+            playsInline
+            className="absolute inset-0 w-full h-full object-contain"
           />
         ) : (
           <div className="absolute inset-0 flex items-center justify-center bg-gray-950">

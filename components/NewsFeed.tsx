@@ -58,7 +58,7 @@ export default function NewsFeed() {
       {data && (
         <div className="px-4 py-1.5 border-b border-gray-800/50 shrink-0">
           <span className="text-[10px] text-gray-600">
-            {data.length} stories — Bloomberg · CNBC · Investing Economy · Eco Indicators · Markets
+            {data.length} stories — Bloomberg · CNBC · Investing Economy · Eco Indicators · Markets · BloombergHT
           </span>
         </div>
       )}
