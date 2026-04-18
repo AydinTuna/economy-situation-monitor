@@ -78,6 +78,29 @@ export default function NewsFeed() {
           <NewsItem key={item.id} item={item} />
         ))}
       </div>
+
+      {/* Attribution */}
+      <div className="shrink-0 px-4 py-2.5 border-t border-gray-800/50 flex flex-col gap-1">
+        <span className="text-[10px] text-gray-600">
+          For requests &amp; inquiries, feel free to reach out:
+        </span>
+        <div className="flex items-center justify-between">
+          <a
+            href="https://github.com/AydinTuna"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-[10px] text-gray-700 hover:text-gray-400 transition-colors"
+          >
+            github.com/AydinTuna
+          </a>
+          <a
+            href="mailto:aydinbahadirtuna@gmail.com"
+            className="text-[10px] text-gray-700 hover:text-gray-400 transition-colors"
+          >
+            aydinbahadirtuna@gmail.com
+          </a>
+        </div>
+      </div>
     </div>
   );
 }
