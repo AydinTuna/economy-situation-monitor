@@ -26,3 +26,13 @@ export interface HLSVideoStream {
   hlsUrl: string;
   color: string;
 }
+
+export interface EconomicEvent {
+  id: string;
+  title: string;
+  date: string;    // e.g. "Apr 18"
+  time: string;    // e.g. "14:30" (UTC)
+  currency: string;
+  importance: number; // 1–3
+  url: string;
+}

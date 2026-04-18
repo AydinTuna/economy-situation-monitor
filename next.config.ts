@@ -27,7 +27,7 @@ const nextConfig: NextConfig = {
               "font-src 'self' https://fonts.gstatic.com",
               "img-src 'self' data: https:",
               "frame-src https://www.youtube.com https://www.youtube-nocookie.com",
-              "connect-src 'self' https://ciner.daioncdn.net https://ciner-live.daioncdn.net https://bloomberght-live.daioncdn.net",
+              "connect-src 'self' https://ciner.daioncdn.net https://ciner-live.daioncdn.net https://bloomberght-live.daioncdn.net https://www.investing.com",
               "media-src 'self' https:",
             ].join("; "),
           },

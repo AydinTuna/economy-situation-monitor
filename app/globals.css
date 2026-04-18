@@ -27,3 +27,31 @@ body {
   background-color: #374151;
   border-radius: 2px;
 }
+
+/* Ticker band scroll animations */
+@keyframes ticker-scroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+.animate-ticker {
+  animation: ticker-scroll 60s linear infinite;
+}
+
+.animate-ticker:hover {
+  animation-duration: 200s;
+}
+
+.animate-ticker-slow {
+  animation: ticker-scroll 120s linear infinite;
+}
+
+/* Toast fade-in */
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.25s ease-out forwards;
+}
