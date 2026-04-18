@@ -53,12 +53,6 @@ export const VIDEO_STREAMS: VideoStream[] = [
       'https://www.youtube.com/embed/live_stream?channel=UCvJJ_dzjViJCoLf5uKUTwoA&autoplay=1&mute=1',
     color: 'bg-blue-500',
   },
-  {
-    name: 'Reuters',
-    embedUrl:
-      'https://www.youtube.com/embed/nzyyLIvt_jE?autoplay=1&mute=1',
-    color: 'bg-cyan-500',
-  },
 ];
 
 export const HLS_STREAMS: HLSVideoStream[] = [
