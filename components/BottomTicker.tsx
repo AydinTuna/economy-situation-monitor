@@ -48,8 +48,8 @@ const MARKETS: Market[] = [
     key: 'dfm',
     label: 'Dubai',
     tz: 'Asia/Dubai',
-    tradingDays: [0, 1, 2, 3, 4], // Sun–Thu
-    sessions: [{ open: { h: 10, m: 0 }, close: { h: 16, m: 0 } }],
+    tradingDays: [1, 2, 3, 4, 5], // Mon–Fri
+    sessions: [{ open: { h: 10, m: 0 }, close: { h: 14, m: 45 } }],
   },
   {
     key: 'bist',
