@@ -11,6 +11,13 @@ const geistSans = Geist({
 export const metadata: Metadata = {
   title: "Situation Monitor",
   description: "Live news feed and stream dashboard — Bloomberg, CNN, CNBC",
+  twitter: {
+    card: "summary",
+  },
+  openGraph: {
+    title: "Situation Monitor",
+    description: "Live news feed and stream dashboard — Bloomberg, CNN, CNBC",
+  },
 };
 
 export default function RootLayout({
