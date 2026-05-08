@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useRef, useState, useCallback } from 'react';
+import { useEffect, useRef, useState, useCallback, useMemo } from 'react';
+import { tradingViewTickerTapeSrc } from '@/lib/tradingview-symbols';
 
 /* ─────────────────────────────────────────
    Market definitions
@@ -242,6 +243,7 @@ function MarketCard({ market, now }: MarketCardProps) {
    Main component
 ───────────────────────────────────────── */
 export default function BottomTicker() {
+  const tickerSrc = useMemo(() => tradingViewTickerTapeSrc(), []);
   const [now, setNow] = useState<Date>(() => new Date());
   const [tzOffset, setTzOffset] = useState<number>(DEFAULT_OFFSET);
   const [showTzMenu, setShowTzMenu] = useState(false);
@@ -357,7 +359,7 @@ export default function BottomTicker() {
   return (
     <>
       {/* Toast notifications */}
-      <div className="fixed bottom-12 right-4 z-50 flex flex-col gap-2 pointer-events-none">
+      <div className="fixed bottom-[5.5rem] right-4 z-50 flex flex-col gap-2 pointer-events-none">
         {toasts.map((t) => (
           <div
             key={t.id}
@@ -398,7 +400,20 @@ export default function BottomTicker() {
         </div>
       )}
 
-      {/* Bottom ticker band */}
+      {/* Live quotes — TradingView ticker tape */}
+      <div
+        className="relative w-full shrink-0 h-12 border-t border-gray-800 overflow-hidden z-20"
+        style={{ backgroundColor: 'var(--app-surface)' }}
+      >
+        <iframe
+          title="Canlı fiyatlar"
+          src={tickerSrc}
+          className="absolute inset-0 w-full h-full border-0"
+          style={{ backgroundColor: 'var(--app-surface)' }}
+        />
+      </div>
+
+      {/* Exchange hours ticker */}
       <div className="relative w-full shrink-0 h-10 bg-gray-900 border-t border-gray-800 overflow-hidden flex items-center z-20">
         {/* Label */}
         <div className="absolute left-0 top-0 h-full flex items-center px-2 bg-gray-900 z-20 border-r border-gray-800 shrink-0">

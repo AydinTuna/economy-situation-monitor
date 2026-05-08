@@ -3,6 +3,8 @@
 :root {
   color-scheme: dark;
   --font-sans: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+  /* Tailwind gray-950 — TradingView embeds + paneller aynı yüzey rengi */
+  --app-surface: #030712;
 }
 
 body {

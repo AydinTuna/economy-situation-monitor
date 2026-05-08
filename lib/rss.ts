@@ -55,6 +55,8 @@ export const VIDEO_STREAMS: VideoStream[] = [
   },
 ];
 
+export const DEFAULT_STREAM_ID = 'Bloomberg';
+
 export const HLS_STREAMS: HLSVideoStream[] = [
   {
     name: 'BloombergHT',

@@ -26,7 +26,7 @@ const nextConfig: NextConfig = {
               "style-src 'self' 'unsafe-inline'",
               "font-src 'self' https://fonts.gstatic.com",
               "img-src 'self' data: https:",
-              "frame-src https://www.youtube.com https://www.youtube-nocookie.com",
+              "frame-src https://www.youtube.com https://www.youtube-nocookie.com https://www.tradingview.com https://www.tradingview-widget.com https://s.tradingview.com",
               "connect-src 'self' https://ciner.daioncdn.net https://ciner-live.daioncdn.net https://bloomberght-live.daioncdn.net https://www.investing.com",
               "media-src 'self' https:",
             ].join("; "),
